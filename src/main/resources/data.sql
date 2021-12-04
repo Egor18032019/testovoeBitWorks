@@ -1,4 +1,12 @@
-INSERT INTO users (ID, name)
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(50)
+);
+
+INSERT INTO users (id, name)
 VALUES
                   (1, ''),
                   (2, ''),
@@ -7,5 +15,5 @@ VALUES
                   (5, ''),
                   (6, ''),
                   (7, ''),
-                  (9, ''),
-                  (9, ''),
+                  (8, ''),
+                  (9, '');
