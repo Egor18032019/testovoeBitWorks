@@ -16,4 +16,11 @@ public class Users {
     private Integer id;
     @Column
     private String name;
+
+    public Users() {}
+
+    public Users(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
