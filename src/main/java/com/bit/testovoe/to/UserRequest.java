@@ -1,5 +1,6 @@
 package com.bit.testovoe.to;
 
+import com.bit.testovoe.entity.Users;
 import com.bit.testovoe.utils.Priority;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,15 +8,20 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
-@JsonPropertyOrder({ "sign", "name","requestList","priority" })
+
+@JsonPropertyOrder({"sign", "name", "requestList", "priority"})
 public class UserRequest implements Rec {
     public String sign;
     public String name;
     public List<Integer> requestList;
     public Priority priority;
 
+    public UserRequest() {
 
-    //TODO а если не Енум придёт ??
+    }
+
+
+    //TODO а если не Енум придёт  то упадет с ошибкой. надо поймать и обработать ??
     @JsonCreator
     public UserRequest(String sign, String name, List<Integer> requestList, Priority priority) {
         this.sign = sign;
@@ -30,7 +36,7 @@ public class UserRequest implements Rec {
         return name;
     }
 
-    @JsonAnyGetter
+    @JsonGetter("requestList")
     @Override
     public List<Integer> getRequestList() {
         return requestList;
@@ -58,4 +64,10 @@ public class UserRequest implements Rec {
                 '}';
     }
 }
+
+
+
+
+
+
 

@@ -7,6 +7,7 @@ import com.bit.testovoe.to.UserRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 // тут прописать логику
@@ -29,33 +30,57 @@ public class UsersService {
     }
 
     public Rec request(Rec request) {
-        System.out.println(" пришло в UsersService");
-/*
-Пришли данные
-Смотрим есть ли в ячейках куда хотим записать что то
-Если нет то записываем
-Если есть то =>
-Смотрим кто записан в этой ячейки и сколько у него ячеек
-Если ячеек больше чем мы принесли то выравниваем(было 2 у нас пришло 3 равнять в сторону существующего)
- */
+        System.out.println(" пришло в UsersService " + request.toString());
+        List <Integer> requestList = request.getRequestList();
 
-        for (int i = 0; i < request.getRequestList().size(); i++) {
-            if (usersRepository.get(request.getRequestList().get(i)).isPresent()) {
-               int present = usersRepository.getAmountByUsers(request.getName());
-               if(present>request.getRequestList().size()){
-                   System.out.println("Ничего тут не делаем и переходим дальше");
-               }else {
-                   Users rewriteUser = new Users(i,request.getName());
-                   usersRepository.save(rewriteUser);
-               }
 
-            }
-            else {
-                Users writeUser = new Users(i,request.getName());
+        for (int i = 0; i < requestList.size(); i++) {
+
+            Optional<Users> presentUsers;
+            if (usersRepository.get((Integer) requestList.get(i)).isPresent()) {
+                presentUsers = usersRepository.get((Integer) requestList.get(i));
+                System.out.println("47 " + presentUsers.get().getName());
+                /*
+                  считаем сколько есть у этого юзера
+                 */
+                int present = usersRepository.getAmountByUsers(presentUsers.get().getName());
+                System.out.println("present " + present);
+                int flag = 0;
+                if (present < requestList.size()) {
+
+                    recursion(present,requestList,request,flag);
+
+                } else {
+                    System.out.println("53 " + request.getName() + " " + i + requestList.get(i));
+                    Users rewriteUser = new Users(requestList.get(i), request.getName());
+                    usersRepository.save(rewriteUser);
+                }
+
+            } else {
+                Users writeUser = new Users(requestList.get(i), request.getName());
+                System.out.println("writeUser " + writeUser);
                 usersRepository.save(writeUser);
             }
         }
         return request;
     }
 
+    /**
+     * Рекурсия на запись.
+     * @param present сколько ячеек имеет этот юзер в БД
+     * @param requestList Лист с номерами ячеек в которые хотим записать
+     * @param request сам запрос
+     * @param intrecursionFlag флаг для рекурсии
+     */
+    public void recursion (int present , List  <Integer> requestList, Rec request, int intrecursionFlag){
+        if (present > 1) {
+            Users addUser = new Users(requestList.get(intrecursionFlag), request.getName());
+            usersRepository.save(addUser);
+        }
+        else {
+            intrecursionFlag++;
+            recursion(present ,requestList,request,intrecursionFlag);
+        }
+
+    }
 }
