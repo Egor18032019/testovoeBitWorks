@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Integer>{
+public interface UsersRepository extends JpaRepository<Users, Integer> {
 //    @Query("SELECT '*' FROM Users ")
 //    Optional<Users> findALl();
 
-    List <Users> findAllBy();
+    List<Users> findAllBy();
 
     @Query("SELECT s FROM Users s Where s.id=:id")
     Optional<Users> get(@Param("id") int id);
@@ -25,7 +25,8 @@ public interface UsersRepository extends JpaRepository<Users, Integer>{
     int getAmountByUsers(@Param("name") String name);
 
     @Override
-    Users save (Users users);
+    Users save(Users users);
+
 
 
 }

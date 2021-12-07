@@ -17,4 +17,6 @@ public interface CrudUserRepository {
     int getAmountByUsers(String name);
 
     Users save(Users users);
+
+    void delete(Users users);
 }

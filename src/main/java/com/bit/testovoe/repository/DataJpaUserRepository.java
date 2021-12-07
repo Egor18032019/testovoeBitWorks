@@ -34,9 +34,12 @@ public class DataJpaUserRepository  implements CrudUserRepository{
 
     @Override
     public Users save(Users users) {
-        System.out.println(" DataJpaUserRepository ");
-        return userRepository.save(users);
+         return userRepository.save(users);
     }
 
 
+    public void delete (Users users) {
+        System.out.println(" DataJpaUserRepository delete ");
+          userRepository.delete(users);
+    }
 }
