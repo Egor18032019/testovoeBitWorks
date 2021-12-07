@@ -5,8 +5,10 @@ import com.bit.testovoe.repository.CrudUserRepository;
 import com.bit.testovoe.to.Rec;
 import com.bit.testovoe.to.UserRequest;
 import com.bit.testovoe.utils.Priority;
+import com.bit.testovoe.utils.Sign;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,73 +35,93 @@ public class UsersService {
     public Rec request(Rec request) {
         System.out.println(" пришло в UsersService " + request.toString());
         List<Integer> requestList = request.getRequestList();
+        List<Integer> answerList = new ArrayList<>();
 
-
+        int flag = 0;
         for (int i = 0; i < requestList.size(); i++) {
+
             //TODO убрать в Енум
-            if (request.getSign().equals("+")) {
+            if (request.getSign().equals(Sign.PLUS)) {
                 Optional<Users> presentUsers;
                 if (usersRepository.get(requestList.get(i)).isPresent()) {
                     presentUsers = usersRepository.get(requestList.get(i));
-                    System.out.println("42 " + presentUsers.get().getName());
-                /*
-                  считаем сколько есть у этого юзера
-                 */
+
+                    //считаем сколько есть у этого юзера
                     int present = usersRepository.getAmountByUsers(presentUsers.get().getName());
-                    System.out.println("present " + present);
-                    int flag = 0;
+                    // сколько у нового в настоящий момент
+                    int future = usersRepository.getAmountByUsers(request.getName());
+                    System.out.println("present " + present + "future " + future);
+
                     if (request.getPriority().equals(Priority.LOW)) {
                         System.out.println("i" + i + " Ничего не делаем пропускаем дальше");
                     } else {
-                        if (present < requestList.size()) {
+                        if (present > 1 && present >= future) {
 
-                            recursion(present, requestList, request, flag);
-
-                        } else {
-                            System.out.println("58 " + request.getName() + " " + i + requestList.get(i));
                             Users rewriteUser = new Users(requestList.get(i), request.getName());
                             usersRepository.save(rewriteUser);
-                        }
-                    }
+                            answerList.add(requestList.get(i));
 
+                        } else {
+                            flag = flag + 1;
+                        }
+                        if (flag == requestList.size()) {
+                            Users rewriteUser = new Users(requestList.get(i), request.getName());
+                            usersRepository.save(rewriteUser);
+                            answerList.add(requestList.get(i));
+                        }
+
+                    }
                 } else {
                     Users writeUser = new Users(requestList.get(i), request.getName());
-                    System.out.println("writeUser " + writeUser);
                     usersRepository.save(writeUser);
+                    answerList.add(requestList.get(i));
                 }
             } else {
                 Optional<Users> isPresentCell = usersRepository.get(requestList.get(i));
                 if (isPresentCell.isPresent()) {
-                    System.out.println(isPresentCell.toString());
+
                     if (isPresentCell.get().getName().equals(request.getName())) {
                         Users deleteUser = new Users(requestList.get(i), request.getName());
                         usersRepository.delete(deleteUser);
+                        answerList.add(requestList.get(i));
                     }
                 }
             }
         }
-        // TODO возврат сделать того что по факту в БД записалось
+
+        request.setRequestList(answerList);
         return request;
     }
 
     /**
      * Рекурсия на запись.
      *
-     * @param present          сколько ячеек имеет этот юзер в БД
-     * @param requestList      Лист с номерами ячеек в которые хотим записать
-     * @param request          сам запрос
-     * @param intrecursionFlag флаг для рекурсии
+     * @param present     сколько ячеек имеет этот юзер в БД
+     * @param requestList Лист с номерами ячеек в которые хотим записать
+     * @param request     сам запрос
+     * @param i           флаг для рекурсии
+     * @param answerList  то что по факту в БД
      */
-    public void recursion(int present, List<Integer> requestList, Rec request, int intrecursionFlag) {
-        if(present==1){
+    public void recursion(Integer present, List<Integer> requestList, Rec request, int i,
+                          List<Integer> answerList) {
+        if (present == 1) {
             return;
         }
-        if (present > 1) {
-            Users addUser = new Users(requestList.get(intrecursionFlag), request.getName());
-            usersRepository.save(addUser);
+
+        if (present > 1 && present <= requestList.size()) {
+            if (!answerList.contains(requestList.get(i))) {
+
+
+                Users addUser = new Users(requestList.get(i), request.getName());
+                usersRepository.save(addUser);
+                System.out.println(answerList.toString() + " " + i);
+
+                answerList.add(requestList.get(i));
+            }
         } else {
-            intrecursionFlag++;
-            recursion(present, requestList, request, intrecursionFlag);
+            int intrecursionFlag = i + 1;
+            System.out.println("intrecursionFlag" + intrecursionFlag);
+            recursion(present, requestList, request, intrecursionFlag, answerList);
         }
 
     }

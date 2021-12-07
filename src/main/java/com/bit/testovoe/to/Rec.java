@@ -13,4 +13,7 @@ public interface Rec {
     Priority getPriority();
 
     String getSign();
+
+    void setRequestList(List<Integer> arr);
+
 }

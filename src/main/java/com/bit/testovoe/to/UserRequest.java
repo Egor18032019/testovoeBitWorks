@@ -53,6 +53,10 @@ public class UserRequest implements Rec {
     public String getSign() {
         return sign;
     }
+    @Override
+    public void setRequestList(List<Integer> requestList) {
+        this.requestList = requestList;
+    }
 
     @Override
     public String toString() {
