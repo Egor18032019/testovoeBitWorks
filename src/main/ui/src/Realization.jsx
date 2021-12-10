@@ -4,11 +4,11 @@ import { DataContext } from "./DataReducer"
 import { getAllCells, recUser } from "./Api.js"
 import Cell from "./Cell.jsx"
 import './Realization.css';
-import { ReducerActionRouter, Active } from "./CONST.js"
+import { ReducerActionRouter } from "./CONST.js"
 
 const Realization = () => {
     const { state, dispatch } = useContext(DataContext);
-    console.log(dispatch)
+
     let [cells, setcells] = useState([]);
     const formRef = useRef(null);
     const nameRef = useRef(null);
@@ -23,7 +23,7 @@ const Realization = () => {
                     type: ReducerActionRouter.GETALLCELLS,
                     payload: data
                 })
-             
+
             })
     }, []);
 
@@ -32,24 +32,26 @@ const Realization = () => {
     }, [state.result]);
 
     const updateAll = (evt) => {
-        evt.preventDefault();
+        if (evt) {
+            evt.preventDefault();
+        }
         console.log("updateAll")
         getAllCells()
-        .then(data => {
-            console.log(data)
-            dispatch({
-                type: ReducerActionRouter.GETALLCELLS,
-                payload: data
+            .then(data => {
+                console.log(data)
+                dispatch({
+                    type: ReducerActionRouter.GETALLCELLS,
+                    payload: data
+                })
+
             })
-         
-        })
     }
 
     const sendCells = (evt) => {
         evt.preventDefault();
         console.log("SendCells ")
         const requestList = Array.from(cellsRef.current.value.split(","));
-        console.log(requestList)
+
         const userRequest = {
             sign: signRef.current.value,
             name: nameRef.current.value,
@@ -57,17 +59,10 @@ const Realization = () => {
             priority: priorityRef.current.value
         }
         console.log(userRequest)
-  
- 
+
+
         recUser(userRequest)
-        .then(data => {
-            console.log(data)
-            dispatch({
-                type: ReducerActionRouter.SENDCELLS,
-                payload: data
-            })
-         
-        })
+        updateAll()
     }
     const _handleReset = () => {
         this.formRef = null;

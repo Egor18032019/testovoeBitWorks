@@ -24,24 +24,19 @@ public class UsersController {
     @Autowired
     UsersService usersService;
 
-//    @Autowired
-//    UserRequest userRequest;
-
-
-
     @GetMapping(path = UserLinks.LIST_USERS)
-    public ResponseEntity<?> listUsers() {
+    public ResponseEntity<?> getAllCells() {
         log.info("UsersController: UsersController get list users");
         List<Users> resource = usersService.getUsers();
         return ResponseEntity.ok(resource);
     }
 
-    @PostMapping(path = UserLinks.ADD_USER)
-    public ResponseEntity<?> saveUser(@RequestBody Users user) {
-        log.info("UsersController: Post list users");
-        Users resource = usersService.saveUser(user);
-        return ResponseEntity.ok(resource);
-    }
+//    @PostMapping(path = UserLinks.ADD_USER)
+//    public ResponseEntity<?> saveUser(@RequestBody Users user) {
+//        log.info("UsersController: Post list users");
+//        Users resource = usersService.saveUser(user);
+//        return ResponseEntity.ok(resource);
+//    }
 
     @PostMapping(path = UserLinks.ADD_REQUEST)
     public ResponseEntity<?> recUser(@RequestBody UserRequest userRequest) {
@@ -51,10 +46,5 @@ public class UsersController {
         return ResponseEntity.ok(resource);
     }
 
-    @PostMapping(path = UserLinks.LIST)
-    public ResponseEntity<?> testList(@RequestBody ListTest listTest) {
-        System.out.println("listTest " + listTest);
-        return  new ResponseEntity<>(HttpStatus.OK);
-    }
 }
 

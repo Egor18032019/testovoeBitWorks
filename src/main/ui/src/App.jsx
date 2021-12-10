@@ -10,8 +10,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import { Link } from "react-router-dom";
-import React, { useState, useReducer } from 'react';
+ import React, { useReducer } from 'react';
 
 import { DataContext, initialState, dataReducer } from "./DataReducer"
 

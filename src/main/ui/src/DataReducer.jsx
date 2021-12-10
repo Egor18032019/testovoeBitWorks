@@ -9,11 +9,6 @@ const initialState = {
     status: ""
 };
 
-/*
-[{"id":1,"name":""},{"id":2,"name":""},{"id":3,"name":""},
-{"id":4,"name":""},{"id":5,"name":""},{"id":6,"name":""}
-,{"id":7,"name":""},{"id":8,"name":""},{"id":9,"name":""}]
-*/
 
 const dataReducer = (state, action) => {
     // eslint-disable-next-line default-case
@@ -25,21 +20,34 @@ const dataReducer = (state, action) => {
                 result: response,
                 status: "getAllCells"
             })
+        // а нужен ли вообще расчет на клиенте ?
         case ReducerActionRouter.SENDCELLS:
-            const newPartResult =action.payload;
-            console.log(newPartResult)
+            const newPartResult = action.payload;
+            const requestList = newPartResult.requestList;
+            const forAddResult = requestList.reduce(
+                function (result, id) {
+                    const foo = {
+                        id: id,
+                        name: newPartResult.name
+                    }
+                    result.push(foo)
+                    return result
+                }, []
+            )
             const oldResult = [].concat(state.result);
-            const newResult = [];
-            // мы должны из в старом результе перезаписать новые значения
+            const newResult = oldResult.filter(e => {
+                return !requestList.includes(e.id)
+            });
+            newResult.push(...forAddResult)
+            newResult.sort((a, b) => {
+                return a.id - b.id
+            }
+            );
             return Object.assign({}, state, {
                 result: newResult,
                 status: "sendCells"
             });
-
-        case ReducerActionRouter.SWITCHPAGE:
-            return Object.assign({}, state, {
-                active: action.payload
-            });
+ 
     }
 }
 
