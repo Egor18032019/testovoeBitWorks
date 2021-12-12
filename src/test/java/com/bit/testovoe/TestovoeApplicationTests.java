@@ -8,6 +8,7 @@ class TestovoeApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("Test begin...");
 	}
 
 }

@@ -69,7 +69,7 @@ public class UsersService {
                     // сколько у нового в настоящий момент
                     int future = usersRepository.getAmountByUsers(request.getName());
 
-                    if (request.getPriority().equals(Priority.LOW)) {
+                    if (request.getPriority().equals(Priority.LOWPRIO)) {
                         System.out.println("i" + i + " Ничего не делаем пропускаем дальше");
                     } else {
                         if (present > 1 && present >= future) {
