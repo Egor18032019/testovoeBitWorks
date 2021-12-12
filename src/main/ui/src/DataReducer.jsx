@@ -1,5 +1,4 @@
 import React from "react";
-import { getAllCells, recUser } from "./Api.js"
 import { ReducerActionRouter, Active } from "./CONST.js"
 
 const DataContext = React.createContext("cells");
@@ -16,9 +15,33 @@ const dataReducer = (state, action) => {
         case ReducerActionRouter.GETALLCELLS:
             const response = action.payload;
 
+            if (response.length < 9) {
+                let arr = []
+                response.forEach((elem) => {
+                    arr.push(elem.id)
+                })
+                const foo = [0,1, 2, 3, 4, 5, 6, 7, 8, 9].filter(e => {
+                    return !arr.includes(e)
+                });
+                foo.forEach((elem) => {
+                    response.push({
+                        id: elem,
+                        name: ""
+                    })
+                })
+            }
+            response.sort((a, b) => {
+                return a.id - b.id
+            })
             return Object.assign({}, state, {
-                result: response,
-                status: "getAllCells"
+                result: response
+            })
+
+        case ReducerActionRouter.ERROR:
+            const responseError = action.payload;
+
+            return Object.assign({}, state, {
+                status: responseError
             })
         // а нужен ли вообще расчет на клиенте ?
         case ReducerActionRouter.SENDCELLS:
@@ -47,7 +70,7 @@ const dataReducer = (state, action) => {
                 result: newResult,
                 status: "sendCells"
             });
- 
+
     }
 }
 

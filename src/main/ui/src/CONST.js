@@ -14,6 +14,7 @@ const AppRoute = {
 const ReducerActionRouter = {
     SWITCHPAGE : `SWITCHPAGE`,
     SENDCELLS: `SENDCELLS`, 
+    ERROR: `ERROR`, 
     GETALLCELLS: `GETALLCELLS`, 
 }
 
