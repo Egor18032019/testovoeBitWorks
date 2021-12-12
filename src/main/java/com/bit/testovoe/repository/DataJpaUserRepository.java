@@ -3,6 +3,7 @@ package com.bit.testovoe.repository;
 import com.bit.testovoe.entity.Users;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +34,19 @@ public class DataJpaUserRepository  implements CrudUserRepository{
     }
 
     @Override
-    public Users save(Users users) {
+    public Users save(@Valid Users users) {
          return userRepository.save(users);
     }
 
 
     public void delete (Users users) {
-        System.out.println(" DataJpaUserRepository delete ");
           userRepository.delete(users);
     }
+
+    @Override
+    public void deleteAll() {
+        System.out.println(" DataJpaUserRepository deleteAll ");
+        userRepository.deleteAll();
+    }
+
 }

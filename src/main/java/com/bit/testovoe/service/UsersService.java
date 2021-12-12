@@ -1,6 +1,7 @@
 package com.bit.testovoe.service;
 
 import com.bit.testovoe.entity.Users;
+import com.bit.testovoe.exception_handling.IncorectDataDuringRequest;
 import com.bit.testovoe.repository.CrudUserRepository;
 import com.bit.testovoe.to.Rec;
 import com.bit.testovoe.to.UserRequest;
@@ -8,9 +9,8 @@ import com.bit.testovoe.utils.Priority;
 import com.bit.testovoe.utils.Sign;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 // тут прописать логику
@@ -34,23 +34,40 @@ public class UsersService {
 
     public Rec request(Rec request) {
         System.out.println(" пришло в UsersService " + request.toString());
-        List<Integer> requestList = request.getRequestList();
+        if (request.getName().length() < 1) {
+            throw new IncorectDataDuringRequest(" Need name this cells !");
+        }
+        //Убрал повторы
+
+        List<Integer> requestList = request.getRequestList().stream().distinct().collect(Collectors.toList());
         List<Integer> answerList = new ArrayList<>();
+
+        if (requestList.size() == 0) {
+            throw new IncorectDataDuringRequest("Необходим список заменяемых мест");
+        }
+        if (requestList.stream().anyMatch(Objects::isNull)) {
+            throw new IncorectDataDuringRequest("в графе \"Места через запятую\" должны быть перечислены цифры через запятую");
+        }
+        if (requestList.stream().anyMatch(x -> x < 0)) {
+            throw new IncorectDataDuringRequest(" Only positive integers ! ");
+        }
+        if (requestList.stream().anyMatch(x -> x > 9)) {
+            throw new IncorectDataDuringRequest(" We have only 9 cells ! ");
+        }
 
         int flag = 0;
         for (int i = 0; i < requestList.size(); i++) {
 
-            //TODO убрать в Енум
             if (request.getSign().equals(Sign.PLUS)) {
                 Optional<Users> presentUsers;
                 if (usersRepository.get(requestList.get(i)).isPresent()) {
+
                     presentUsers = usersRepository.get(requestList.get(i));
 
                     //считаем сколько есть у этого юзера
                     int present = usersRepository.getAmountByUsers(presentUsers.get().getName());
                     // сколько у нового в настоящий момент
                     int future = usersRepository.getAmountByUsers(request.getName());
-                    System.out.println("present " + present + "future " + future);
 
                     if (request.getPriority().equals(Priority.LOW)) {
                         System.out.println("i" + i + " Ничего не делаем пропускаем дальше");
@@ -76,7 +93,8 @@ public class UsersService {
                     usersRepository.save(writeUser);
                     answerList.add(requestList.get(i));
                 }
-            } else {
+            } else if (request.getSign().equals(Sign.MINUS)) {
+
                 Optional<Users> isPresentCell = usersRepository.get(requestList.get(i));
                 if (isPresentCell.isPresent()) {
 
@@ -86,6 +104,8 @@ public class UsersService {
                         answerList.add(requestList.get(i));
                     }
                 }
+            } else {
+                throw new IncorectDataDuringRequest("sign = ( + or - )");
             }
         }
 
@@ -93,36 +113,9 @@ public class UsersService {
         return request;
     }
 
-    /**
-     * Рекурсия на запись.
-     *
-     * @param present     сколько ячеек имеет этот юзер в БД
-     * @param requestList Лист с номерами ячеек в которые хотим записать
-     * @param request     сам запрос
-     * @param i           флаг для рекурсии
-     * @param answerList  то что по факту в БД
-     */
-    public void recursion(Integer present, List<Integer> requestList, Rec request, int i,
-                          List<Integer> answerList) {
-        if (present == 1) {
-            return;
-        }
-
-        if (present > 1 && present <= requestList.size()) {
-            if (!answerList.contains(requestList.get(i))) {
-
-
-                Users addUser = new Users(requestList.get(i), request.getName());
-                usersRepository.save(addUser);
-                System.out.println(answerList.toString() + " " + i);
-
-                answerList.add(requestList.get(i));
-            }
-        } else {
-            int intrecursionFlag = i + 1;
-            System.out.println("intrecursionFlag" + intrecursionFlag);
-            recursion(present, requestList, request, intrecursionFlag, answerList);
-        }
-
+    public boolean deleteAll(){
+        usersRepository.deleteAll();
+        return true;
     }
+
 }

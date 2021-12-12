@@ -6,12 +6,17 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @JsonPropertyOrder({"sign", "name", "requestList", "priority"})
 public class UserRequest implements Rec {
+
+
     public String sign;
+
     public String name;
     public List<Integer> requestList;
     public Priority priority;
@@ -57,6 +62,7 @@ public class UserRequest implements Rec {
     public void setRequestList(List<Integer> requestList) {
         this.requestList = requestList;
     }
+
 
     @Override
     public String toString() {

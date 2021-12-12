@@ -13,8 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Integer> {
-//    @Query("SELECT '*' FROM Users ")
-//    Optional<Users> findALl();
 
     List<Users> findAllBy();
 

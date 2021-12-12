@@ -8,4 +8,11 @@
 .cell {
     display: flex;
     flex-direction: column;
+    border: 2px solid black;
+}
+
+.cell_name {
+    width: 30px;
+    border: 2px solid black;
+    height: 30px;
 }
