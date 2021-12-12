@@ -34,7 +34,8 @@ const dataReducer = (state, action) => {
                 return a.id - b.id
             })
             return Object.assign({}, state, {
-                result: response
+                result: response,
+                status:""
             })
 
         case ReducerActionRouter.ERROR:
@@ -68,7 +69,7 @@ const dataReducer = (state, action) => {
             );
             return Object.assign({}, state, {
                 result: newResult,
-                status: "sendCells"
+                status: ""
             });
 
     }
