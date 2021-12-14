@@ -12,8 +12,7 @@ public class AppController {
 
     @RequestMapping({"/"})
     public String loadUI() {
-        log.info("loading page from React");
-        return "forward:/index.html";
+          return "forward:/index.html";
     }
 
 }
