@@ -31,6 +31,7 @@ public class UsersService {
         this.usersRepository = usersRepository;
     }
 
+
     public List<Users> getUsers() {
         return usersRepository.findAll();
     }
@@ -61,18 +62,19 @@ public class UsersService {
         if (requestList.stream().anyMatch(x -> x > 9)) {
             throw new IncorectDataDuringRequest(" We have only cells => 0,1,2,3,4,5,6,7,8,9! ");
         }
+        //записываем в пустые ячейки
         for (int q = 0; q < requestList.size(); q++) {
             if (usersRepository.get(requestList.get(q)).isEmpty()) {
                 Users writeUser = new Users(requestList.get(q), request.getName(), request.getPriority());
                 usersRepository.save(writeUser);
                 answerList.add(requestList.get(q));
-                System.out.println("69 'answerList'" + answerList.size());
             }
         }
+        //удаляем из списка то что уже записали в пустые ячейки
+        requestList.removeIf(answerList::contains);
 
         int flag = 0;
         for (int i = 0; i < requestList.size(); i++) {
-
 
             if (request.getSign().equals(Sign.PLUS)) {
 
@@ -85,9 +87,10 @@ public class UsersService {
                 int future = usersRepository.getAmountByUsers(request.getName());
 
                 if (request.getPriority().equals(Priority.LOWPRIO) && presentUsers.get().getPriority().equals(Priority.NORMAL)) {
-                        System.out.println("Пропускаем ");
+                    System.out.println("Пропускаем ");
 
-                } else {
+                }
+                else {
                     if (presentUsers.get().getPriority().equals(Priority.LOWPRIO)) {
                         Users rewriteUser = new Users(requestList.get(i), request.getName(), request.getPriority());
                         usersRepository.save(rewriteUser);
@@ -100,19 +103,19 @@ public class UsersService {
                         usersRepository.save(rewriteUser);
                         answerList.add(requestList.get(i));
 
-                    } else {
+                    }
+                    else {
                         flag = flag + 1;
                     }
-                    if (flag == requestList.size()) {
+                    if (flag == (requestList.size() +answerList.size())) {
                         Users rewriteUser = new Users(requestList.get(i), request.getName(), request.getPriority());
                         usersRepository.save(rewriteUser);
                         answerList.add(requestList.get(i));
                     }
 
                 }
-
-
-            } else if (request.getSign().equals(Sign.MINUS)) {
+            }
+            else if (request.getSign().equals(Sign.MINUS)) {
 
                 Optional<Users> isPresentCell = usersRepository.get(requestList.get(i));
                 if (isPresentCell.isPresent()) {
@@ -123,11 +126,11 @@ public class UsersService {
                         answerList.add(requestList.get(i));
                     }
                 }
-            } else {
+            }
+            else {
                 throw new IncorectDataDuringRequest("sign = ( + or - )");
             }
         }
-        System.out.println("151 'answerList'" + answerList.size());
 
         request.setRequestList(answerList);
         return request;
